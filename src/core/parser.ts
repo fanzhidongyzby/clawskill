@@ -3,7 +3,6 @@
  */
 
 import type { ParsedSkillMd, InstallCommand } from '../types/skill';
-import { InvalidSkillUrl } from '../types/skill';
 
 const FRONTMATTER_REGEX = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
 
