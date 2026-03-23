@@ -6,7 +6,7 @@ describe('Skill API Routes', () => {
   let app: FastifyInstance;
 
   beforeAll(async () => {
-    app = await createServer({ logger: false });
+    app = await createServer({ logger: false, skipAuth: true, inMemory: true });
     await app.ready();
   });
 

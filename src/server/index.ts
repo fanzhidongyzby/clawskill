@@ -10,13 +10,18 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import type { FastifyInstance } from 'fastify';
 import { SkillService } from '../core/skill-service';
+import { KyselyRepository } from '../core/kysely-repository';
 import { registerSkillRoutes } from './routes/skill-routes';
+import { authMiddleware } from './middleware/auth';
 import { config } from './config';
+import { getStorage } from '../core/storage';
 
 export interface ServerOptions {
   port?: number;
   host?: string;
   logger?: boolean;
+  skipAuth?: boolean;
+  inMemory?: boolean;
 }
 
 export async function createServer(options: ServerOptions = {}): Promise<FastifyInstance> {
@@ -54,6 +59,11 @@ export async function createServer(options: ServerOptions = {}): Promise<Fastify
     routePrefix: '/docs',
   });
 
+  // Auth middleware (skip in test mode)
+  if (!options.skipAuth) {
+    fastify.addHook('preHandler', authMiddleware);
+  }
+
   // Health check
   fastify.get('/health', async () => ({
     status: 'ok',
@@ -62,8 +72,14 @@ export async function createServer(options: ServerOptions = {}): Promise<Fastify
   }));
 
   // Register API routes
-  const skillService = new SkillService();
+  const { InMemorySkillRepository } = await import('../core/skill-service');
+  const repo = options.inMemory ? new InMemorySkillRepository() : new KyselyRepository();
+  const skillService = new SkillService(repo);
   await fastify.register(registerSkillRoutes, { prefix: '/api/v1', skillService });
+
+  // Initialize storage
+  const storage = getStorage();
+  await storage.init();
 
   // Skill URL endpoint (for AI agents)
   fastify.get('/skill/:namespace/:name', async (request, reply) => {
@@ -82,6 +98,44 @@ export async function createServer(options: ServerOptions = {}): Promise<Fastify
       }
       throw error;
     }
+  });
+
+  // Package download endpoint
+  fastify.get('/download/:namespace/:name/:version', async (request, reply) => {
+    const { namespace, name, version } = request.params as {
+      namespace: string;
+      name: string;
+      version: string;
+    };
+    const skillId = `${namespace}/${name}`;
+
+    const pkg = await storage.retrieve(skillId, version);
+    if (!pkg) {
+      return reply.code(404).send({ error: 'Package not found' });
+    }
+
+    return pkg.manifest;
+  });
+
+  // Package file endpoint
+  fastify.get('/download/:namespace/:name/:version/*', async (request, reply) => {
+    const parts = (request.params as string[])[0]?.split('/') ?? [];
+    if (parts.length < 4) {
+      return reply.code(400).send({ error: 'Invalid path' });
+    }
+
+    const namespace = parts[0];
+    const name = parts[1];
+    const version = parts[2];
+    const filePath = parts.slice(3).join('/');
+    const skillId = `${namespace}/${name}`;
+
+    const content = await storage.getFile(skillId, version, filePath);
+    if (!content) {
+      return reply.code(404).send({ error: 'File not found' });
+    }
+
+    return reply.type('application/octet-stream').send(content);
   });
 
   return fastify;

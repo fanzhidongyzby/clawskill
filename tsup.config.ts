@@ -11,6 +11,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   treeshake: true,
-  minify: true,
-  external: ['pg', 'ioredis'],
+  minify: false,
+  external: ['pg', 'pg-pool', 'ioredis'],
+  noExternal: ['kysely'],
 });
