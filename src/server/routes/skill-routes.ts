@@ -49,52 +49,25 @@ export async function registerSkillRoutes(
   const { skillService } = options;
 
   // List skills
-  fastify.get('/skills', {
-    schema: {
-      querystring: ListQuerySchema,
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            data: { type: 'array' },
-            meta: {
-              type: 'object',
-              properties: {
-                total: { type: 'number' },
-                page: { type: 'number' },
-                pageSize: { type: 'number' },
-                totalPages: { type: 'number' },
-              },
-            },
-          },
-        },
-      },
-    },
-  }, async (request: FastifyRequest<{ Querystring: z.infer<typeof ListQuerySchema> }>) => {
+  fastify.get('/skills', async (request) => {
+    const raw = request.query as Record<string, string>;
     const opts: SkillListOptions = {
-      page: request.query.page,
-      pageSize: request.query.pageSize,
-      query: request.query.query,
-      category: request.query.category,
-      sort: request.query.sort,
-      order: request.query.order,
+      page: parseInt(raw.page ?? '1', 10),
+      pageSize: parseInt(raw.pageSize ?? '20', 10),
+      query: raw.query,
+      category: raw.category,
+      sort: raw.sort ?? 'name',
+      order: (raw.order as 'asc' | 'desc') ?? 'asc',
     };
     return skillService.list(opts);
   });
 
   // Create skill
-  fastify.post('/skills', {
-    schema: {
-      body: SkillCreateSchema,
-      response: {
-        201: { type: 'object' },
-      },
-    },
-  }, async (
-    request: FastifyRequest<{ Body: z.infer<typeof SkillCreateSchema> }>,
+  fastify.post('/skills', async (
+    request: FastifyRequest,
     reply: FastifyReply
   ) => {
-    const body = request.body;
+    const body = request.body as z.infer<typeof SkillCreateSchema>;
     const skill: Skill = {
       id: `${body.namespace}/${body.name}`,
       name: body.name,
@@ -201,20 +174,15 @@ export async function registerSkillRoutes(
   });
 
   // Publish version
-  fastify.post('/skills/:namespace/:name/versions', {
-    schema: {
-      body: VersionCreateSchema,
-    },
-  }, async (
+  fastify.post('/skills/:namespace/:name/versions', async (
     request: FastifyRequest<{
       Params: { namespace: string; name: string };
-      Body: z.infer<typeof VersionCreateSchema>;
     }>,
     reply: FastifyReply
   ) => {
     const { namespace, name } = request.params;
     const skillId = `${namespace}/${name}`;
-    const body = request.body;
+    const body = request.body as z.infer<typeof VersionCreateSchema>;
 
     const version: SkillVersion = {
       skillId,
