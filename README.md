@@ -3,98 +3,22 @@
 **AI 智能体的技能市场 — 让技能像 npm 包一样易用**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go)](https://golang.org/)
-[![CI](https://github.com/openclaw/clawskill/actions/workflows/ci.yml/badge.svg)](https://github.com/openclaw/clawskill/actions)
+[![Node Version](https://img.shields.io/badge/Node-22+-339933?logo=node.js)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8+-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 
-## 愿景
+## 技术栈
 
-ClawSkill 是 AI 智能体的"App Store"——超级中间层，统一集成全球技能资源。
-
-### 核心特性
-
-- **Skill URL 标准**: `https://clawskill.com/skill/{namespace}/{name}@{version}`
-- **多源聚合**: GitHub、ClawHub、MCP Registry 一站式访问
-- **CLI 原生**: `clawskill install openclaw/weather`
-- **企业级托管**: 私有技能、安全扫描、合规审计
+- **运行时**: Node.js 22+
+- **包管理**: pnpm
+- **框架**: Fastify 5
+- **CLI**: Commander.js
+- **测试**: Vitest
+- **构建**: tsup
+- **TypeScript**: strict mode
 
 ## 快速开始
 
-### 安装 CLI
-
-```bash
-# 从源码安装
-go install github.com/openclaw/clawskill/cmd/clawskill@latest
-
-# 或使用 Homebrew
-brew install openclaw/tap/clawskill
-```
-
-### 基本使用
-
-```bash
-# 搜索技能
-clawskill search "weather forecast"
-
-# 安装技能
-clawskill install openclaw/weather
-
-# 获取技能信息
-clawskill show openclaw/weather
-
-# 发布技能
-clawskill publish ./my-skill
-```
-
-### Skill URL API
-
-```bash
-# 获取技能元数据（机器可读）
-curl https://api.clawskill.com/skill/openclaw/weather
-
-# 响应示例
-{
-  "id": "openclaw/weather@1.0.0",
-  "name": "weather",
-  "version": "1.0.0",
-  "description": "Weather forecasting via wttr.in",
-  "install_command": "openclaw clawhub install weather"
-}
-```
-
-## 项目结构
-
-```
-clawskill/
-├── cmd/                    # 命令行入口
-│   ├── clawskill/          # CLI 工具
-│   └── server/             # API 服务器
-├── internal/               # 内部实现
-│   ├── skill/              # 技能核心服务
-│   ├── search/             # 搜索服务
-│   ├── registry/           # 注册表服务
-│   ├── security/           # 安全服务
-│   └── user/               # 用户服务
-├── pkg/                    # 公共库
-│   ├── skillurl/           # Skill URL 解析
-│   ├── parser/             # SKILL.md 解析器
-│   └── resolver/           # 依赖解析
-├── api/                    # API 定义
-│   └── openapi.yaml        # OpenAPI 规范
-├── docs/                   # 文档
-├── migrations/             # 数据库迁移
-└── deployments/            # 部署配置
-```
-
-## 开发
-
-### 环境要求
-
-- Go 1.22+
-- PostgreSQL 15+
-- Redis 7+
-- Docker (可选)
-
-### 本地开发
+### 安装
 
 ```bash
 # 克隆仓库
@@ -102,106 +26,195 @@ git clone https://github.com/openclaw/clawskill.git
 cd clawskill
 
 # 安装依赖
-go mod download
+pnpm install
 
 # 运行测试
-make test
+pnpm test
 
-# 启动开发服务器
-make dev
+# 构建
+pnpm build
 ```
 
-### 运行测试
+### CLI 使用
 
 ```bash
-# 单元测试
-make test
+# 搜索技能
+pnpm cli search weather
 
-# 集成测试
-make test-integration
+# 查看技能详情
+pnpm cli show openclaw/weather
 
-# 覆盖率报告
-make coverage
+# 安装技能
+pnpm cli install openclaw/weather
+
+# 发布技能
+pnpm cli publish ./my-skill --dry-run
+
+# 启动 API 服务器
+pnpm cli server
 ```
 
-## 架构
+### API 服务器
+
+```bash
+# 开发模式
+pnpm dev
+
+# 生产模式
+pnpm build && pnpm start
+```
+
+API 文档: http://localhost:8080/docs
+
+## API 端点
+
+| 方法 | 路径 | 描述 |
+|------|------|------|
+| GET | `/health` | 健康检查 |
+| GET | `/api/v1/skills` | 列出技能 |
+| POST | `/api/v1/skills` | 创建技能 |
+| GET | `/api/v1/skills/:ns/:name` | 获取技能 |
+| PUT | `/api/v1/skills/:ns/:name` | 更新技能 |
+| DELETE | `/api/v1/skills/:ns/:name` | 删除技能 |
+| GET | `/api/v1/skills/:ns/:name/versions` | 列出版本 |
+| POST | `/api/v1/skills/:ns/:name/versions` | 发布版本 |
+| GET | `/skill/:ns/:name` | Skill URL API |
+
+## 项目结构
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Agent 消费层                           │
-│           (OpenClaw, LangChain, AutoGPT, 等)             │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│                   Skill URL 接口层                        │
-│           GET /skill/{org}/{name} - 机器可读              │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│                  ClawSkill 核心层                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ 技能发现引擎  │  │ 技能索引服务  │  │ 版本管理器    │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-└────────────────────┬────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────┐
-│                   技能源层                               │
-│    GitHub  │  ClawHub  │  MCP Registry  │  自定义源     │
-└─────────────────────────────────────────────────────────┘
+clawskill/
+├── src/
+│   ├── cli/           # CLI 实现
+│   ├── core/          # 核心业务逻辑
+│   │   ├── parser.ts      # SKILL.md 解析
+│   │   ├── skill-service.ts
+│   │   └── skill-url.ts   # Skill URL 解析
+│   ├── server/        # Fastify 服务器
+│   │   ├── config.ts
+│   │   ├── index.ts
+│   │   └── routes/
+│   ├── types/         # TypeScript 类型
+│   └── index.ts       # 主入口
+├── dist/              # 构建输出
+├── package.json
+├── tsconfig.json
+├── tsup.config.ts
+└── vitest.config.ts
 ```
+
+## 测试覆盖率
+
+| 模块 | 测试数 | 状态 |
+|------|--------|------|
+| parser | 8 | ✅ |
+| skill-url | 16 | ✅ |
+| skill-service | 20 | ✅ |
+| server/routes | 11 | ✅ |
+| server/config | 4 | ✅ |
+| **总计** | **59** | ✅ |
+
+```bash
+pnpm test:coverage
+```
+
+## Skill URL 格式
+
+```
+namespace/name
+namespace/name@version
+https://clawskill.com/skill/namespace/name
+https://clawskill.com/skill/namespace/name@version
+```
+
+## SKILL.md 格式
+
+```yaml
+---
+name: weather
+namespace: openclaw
+version: 1.0.0
+description: Get weather forecasts
+author: OpenClaw Team
+license: MIT
+keywords:
+  - weather
+  - forecast
+categories:
+  - utility
+install:
+  openclaw: openclaw clawhub install weather
+---
+
+# Weather Skill
+
+Skill documentation here...
+```
+
+## 开发
+
+```bash
+# 类型检查
+pnpm typecheck
+
+# 代码检查
+pnpm lint
+
+# 监听测试
+pnpm test:watch
+
+# 开发服务器 (热重载)
+pnpm dev
+```
+
+## Docker
+
+```bash
+# 构建镜像
+docker build -t clawskill .
+
+# 运行容器
+docker run -p 8080:8080 clawskill
+
+# Docker Compose
+docker compose up -d
+```
+
+## 环境变量
+
+| 变量 | 默认值 | 描述 |
+|------|--------|------|
+| PORT | 8080 | 服务器端口 |
+| HOST | 0.0.0.0 | 服务器地址 |
+| NODE_ENV | development | 环境 |
+| LOG_LEVEL | info | 日志级别 |
+| DB_HOST | localhost | 数据库主机 |
+| DB_PORT | 5432 | 数据库端口 |
+| DB_NAME | clawskill | 数据库名 |
+| REDIS_HOST | localhost | Redis 主机 |
 
 ## 路线图
 
 ### v0.1.0 (MVP) - ✅ 完成
 
-- [x] Skill URL 标准 (`pkg/skillurl/`)
-- [x] 基础 API 服务 (`cmd/server/`, `internal/handler/`)
-- [x] GitHub 集成 (`internal/registry/github/`)
-- [x] CLI 工具 (`cmd/clawskill/`)
-- [x] 基础搜索 (`internal/search/`)
-- [x] SKILL.md 解析器 (`pkg/parser/`)
-- [x] 安全扫描 (`internal/security/`)
-- [x] 同步引擎 (`internal/registry/syncer.go`)
-- [x] 配置管理 (`internal/config/`)
-- [x] 结构化日志 (`internal/logger/`)
-- [x] Docker Compose 部署
-- [x] 测试覆盖率 > 70%
+- [x] Skill URL 标准
+- [x] SKILL.md 解析器
+- [x] Fastify API 服务器
+- [x] CLI 工具
+- [x] 测试覆盖 (59 tests)
 
 ### v0.2.0 (Beta)
 
-- [ ] 多源集成 (ClawHub, MCP)
-- [ ] 版本管理增强
-- [ ] 依赖解析 (`pkg/resolver/`)
-- [ ] 语义搜索
+- [ ] PostgreSQL 集成 (Kysely)
+- [ ] Redis 缓存
+- [ ] GitHub 源集成
+- [ ] 多源聚合
 
 ### v1.0.0 (Production)
 
 - [ ] 高可用架构
 - [ ] 企业级功能
-- [ ] 私有技能托管
-- [ ] 完整文档
-
-## 测试覆盖率
-
-| 包 | 覆盖率 |
-|---|-------|
-| internal/config | 98.2% |
-| internal/search | 100.0% |
-| internal/security | 92.3% |
-| internal/skill | 89.6% |
-| internal/client | 85.4% |
-| internal/registry | 72.7% |
-| pkg/parser | 95.0% |
-| pkg/skillurl | 97.4% |
-| internal/middleware | 97.5% |
-| internal/logger | 91.7% |
-
-## 贡献
-
-欢迎贡献！请阅读 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解详情。
+- [ ] OpenClaw 插件集成
 
 ## 许可证
 
@@ -211,4 +224,3 @@ make coverage
 
 - GitHub Issues: https://github.com/openclaw/clawskill/issues
 - Discord: https://discord.gg/clawd
-- Email: support@clawskill.com
