@@ -1,8 +1,26 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
-*.js.map
+
+# Environment
 .env
-.env.*
-!.env.example
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
 coverage/
-.turbo/
+
+# Logs
+*.log
