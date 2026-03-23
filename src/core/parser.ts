@@ -84,6 +84,9 @@ function parseYamlFrontmatter(yaml: string): Frontmatter {
   let currentKey = '';
   let inArray = false;
   let arrayValues: string[] = [];
+  let inNestedObject = false;
+  let nestedKey = '';
+  const nestedObject: Record<string, string> = {};
 
   const lines = yaml.split('\n');
 
@@ -91,7 +94,7 @@ function parseYamlFrontmatter(yaml: string): Frontmatter {
     // Skip empty lines
     if (!line.trim()) continue;
 
-    // Array item
+    // Array item (indented with dash)
     if (line.startsWith('  - ') || line.startsWith('- ')) {
       if (!inArray || !currentKey) continue;
       const value = line.replace(/^(\s*- )/, '').trim();
@@ -99,11 +102,29 @@ function parseYamlFrontmatter(yaml: string): Frontmatter {
       continue;
     }
 
-    // End previous array
+    // Nested object item (indented key: value under a parent key)
+    const nestedMatch = line.match(/^  ([a-zA-Z0-9_-]+):\s*(.*)$/);
+    if (nestedMatch && inNestedObject) {
+      const [, key, value] = nestedMatch;
+      if (key && value !== undefined) {
+        nestedObject[key] = value;
+      }
+      continue;
+    }
+
+    // End previous array or nested object
     if (inArray && currentKey && arrayValues.length > 0) {
       result[currentKey] = arrayValues;
       arrayValues = [];
       inArray = false;
+    }
+    if (inNestedObject && nestedKey && Object.keys(nestedObject).length > 0) {
+      result[nestedKey] = { ...nestedObject };
+      nestedObject['constructor'] = undefined as unknown as string; // Clear
+      for (const k of Object.keys(nestedObject)) {
+        delete nestedObject[k];
+      }
+      inNestedObject = false;
     }
 
     // Key: value
@@ -116,17 +137,24 @@ function parseYamlFrontmatter(yaml: string): Frontmatter {
     if (!value) {
       // Start of array or nested object
       currentKey = key;
+      nestedKey = key;
       inArray = true;
+      inNestedObject = true;
       arrayValues = [];
     } else {
       // Simple value
       result[key] = parseScalarValue(value);
+      inArray = false;
+      inNestedObject = false;
     }
   }
 
-  // End final array
+  // End final array or nested object
   if (inArray && currentKey && arrayValues.length > 0) {
     result[currentKey] = arrayValues;
+  }
+  if (inNestedObject && nestedKey && Object.keys(nestedObject).length > 0) {
+    result[nestedKey] = { ...nestedObject };
   }
 
   return result as Frontmatter;
