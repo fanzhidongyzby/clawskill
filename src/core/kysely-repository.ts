@@ -51,7 +51,7 @@ export class KyselyRepository implements SkillRepository {
         description: skill.description,
         author: skill.author,
         license: skill.license,
-        version: skill.version,
+        latest_version: skill.version,
         keywords: skill.keywords,
         categories: skill.categories,
         homepage: skill.homepage ?? null,
@@ -70,7 +70,7 @@ export class KyselyRepository implements SkillRepository {
         description: skill.description,
         author: skill.author,
         license: skill.license,
-        version: skill.version,
+        latest_version: skill.version,
         keywords: skill.keywords,
         categories: skill.categories,
         homepage: skill.homepage ?? null,
@@ -185,9 +185,11 @@ export class KyselyRepository implements SkillRepository {
   }
 
   async createVersion(version: SkillVersion): Promise<void> {
+    const versionId = `${version.skillId}@${version.version}`;
     await this.db
       .insertInto('versions')
       .values({
+        id: versionId,
         skill_id: version.skillId,
         version: version.version,
         description: version.description,
@@ -206,7 +208,7 @@ export class KyselyRepository implements SkillRepository {
     description: string;
     author: string;
     license: string;
-    version: string;
+    latest_version: string | null;
     keywords: string[];
     categories: string[];
     homepage: string | null;
@@ -223,7 +225,7 @@ export class KyselyRepository implements SkillRepository {
       description: row.description,
       author: row.author,
       license: row.license,
-      version: row.version,
+      version: row.latest_version ?? '',
       keywords: row.keywords ?? [],
       categories: row.categories ?? [],
       homepage: row.homepage ?? undefined,

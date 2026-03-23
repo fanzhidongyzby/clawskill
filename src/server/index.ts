@@ -153,3 +153,11 @@ export async function startServer(options: ServerOptions = {}): Promise<FastifyI
 
   return fastify;
 }
+
+// Auto-start when run directly
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('server/index.ts')) {
+  startServer().catch((err) => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  });
+}
