@@ -1,0 +1,40 @@
+server:
+  port: 8080
+  mode: release
+
+database:
+  host: ${DB_HOST}
+  port: ${DB_PORT}
+  user: ${DB_USER}
+  password: ${DB_PASSWORD}
+  name: ${DB_NAME}
+  sslmode: require
+
+redis:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+  password: ${REDIS_PASSWORD}
+  db: 0
+
+registry:
+  github:
+    enabled: true
+    token: ${GITHUB_TOKEN}
+  clawhub:
+    enabled: true
+    url: https://clawhub.com
+  mcp:
+    enabled: true
+    url: https://registry.modelcontextprotocol.io
+
+security:
+  auth:
+    enabled: true
+    secret: ${JWT_SECRET}
+  rateLimit:
+    enabled: true
+    requestsPerMinute: 100
+
+logging:
+  level: info
+  format: json

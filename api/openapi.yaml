@@ -1,0 +1,326 @@
+openapi: 3.0.3
+info:
+  title: ClawSkill API
+  description: |
+    ClawSkill is the skill package manager for AI agents.
+    
+    ## Skill URL
+    
+    Skills can be accessed via a simple URL pattern:
+    - `GET /skill/{namespace}/{name}` - Get latest version
+    - `GET /skill/{namespace}/{name}@{version}` - Get specific version
+    
+    ## Authentication
+    
+    Most endpoints are public. For publishing and private skills, 
+    use Bearer token authentication.
+  version: 1.0.0
+  contact:
+    name: ClawSkill Team
+    email: support@clawskill.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.clawskill.com
+    description: Production
+  - url: http://localhost:8080
+    description: Development
+
+paths:
+  /api/v1/skills:
+    get:
+      summary: List skills
+      description: Retrieve a paginated list of skills with optional filtering.
+      operationId: listSkills
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: size
+          in: query
+          description: Page size
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: sort
+          in: query
+          description: Sort field
+          schema:
+            type: string
+            enum: [name, downloads, stars, created_at, updated_at]
+            default: downloads
+        - name: order
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - name: q
+          in: query
+          description: Search query
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: Filter by category
+          schema:
+            type: string
+        - name: license
+          in: query
+          description: Filter by license
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Skill'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /api/v1/skills/{namespace}/{name}:
+    get:
+      summary: Get a skill
+      description: Retrieve details of a specific skill.
+      operationId: getSkill
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillDetail'
+        '404':
+          description: Skill not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /skill/{namespace}/{name}:
+    get:
+      summary: Get skill by URL (AI Agent API)
+      description: |
+        Get the latest version of a skill via Skill URL.
+        This endpoint is optimized for AI agent consumption.
+      operationId: getSkillByURL
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillDetail'
+
+  /skill/{namespace}/{name}@{version}:
+    get:
+      summary: Get specific version by URL
+      description: Get a specific version of a skill via Skill URL.
+      operationId: getSkillByVersion
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillDetail'
+        '404':
+          description: Skill or version not found
+
+components:
+  schemas:
+    Skill:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier (namespace/name)
+          example: openclaw/weather
+        name:
+          type: string
+          description: Skill name
+          example: weather
+        namespace:
+          type: string
+          description: Organization or user namespace
+          example: openclaw
+        description:
+          type: string
+          description: Brief description
+          example: Get weather forecasts via wttr.in
+        author:
+          type: string
+          description: Author name
+        license:
+          type: string
+          description: SPDX license identifier
+          example: MIT
+        homepage:
+          type: string
+          format: uri
+        repository:
+          type: string
+          format: uri
+        keywords:
+          type: array
+          items:
+            type: string
+        categories:
+          type: array
+          items:
+            type: string
+        visibility:
+          type: string
+          enum: [public, private]
+        latest_version:
+          type: string
+        downloads:
+          type: integer
+        stars:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SkillDetail:
+      allOf:
+        - $ref: '#/components/schemas/Skill'
+        - type: object
+          properties:
+            current_version:
+              $ref: '#/components/schemas/Version'
+            install_commands:
+              type: array
+              items:
+                $ref: '#/components/schemas/InstallCommand'
+
+    Version:
+      type: object
+      properties:
+        id:
+          type: string
+          example: openclaw/weather@1.0.0
+        skill_id:
+          type: string
+        version:
+          type: string
+        description:
+          type: string
+        changelog:
+          type: string
+        skill_md_url:
+          type: string
+          format: uri
+        skill_md_hash:
+          type: string
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dependency'
+        compatibility:
+          type: array
+          items:
+            type: string
+        published_at:
+          type: string
+          format: date-time
+        deprecated:
+          type: boolean
+        yanked:
+          type: boolean
+
+    Dependency:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        optional:
+          type: boolean
+        constraint:
+          type: string
+
+    InstallCommand:
+      type: object
+      properties:
+        platform:
+          type: string
+          example: openclaw
+        command:
+          type: string
+          example: openclaw clawhub install weather
+
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message

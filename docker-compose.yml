@@ -1,0 +1,146 @@
+# ClawSkill Development Environment
+# PostgreSQL + Redis + API Server
+#
+# Usage:
+#   docker-compose up -d        # Start all services
+#   docker-compose down         # Stop all services
+#   docker-compose logs -f api  # View API logs
+#
+# Services:
+#   - postgres: PostgreSQL 16 database
+#   - redis: Redis 7 cache
+#   - api: ClawSkill API server
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: clawskill-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: clawskill
+      POSTGRES_PASSWORD: clawskill_dev
+      POSTGRES_DB: clawskill
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clawskill -d clawskill"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clawskill-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: clawskill-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clawskill-network
+
+  # ClawSkill API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: clawskill-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Server configuration
+      CLAWSKILL_HOST: 0.0.0.0
+      CLAWSKILL_PORT: 8080
+      CLAWSKILL_MODE: release
+      
+      # Database configuration
+      CLAWSKILL_DB_HOST: postgres
+      CLAWSKILL_DB_PORT: 5432
+      CLAWSKILL_DB_USER: clawskill
+      CLAWSKILL_DB_PASSWORD: clawskill_dev
+      CLAWSKILL_DB_NAME: clawskill
+      CLAWSKILL_DB_SSLMODE: disable
+      
+      # Redis configuration
+      CLAWSKILL_REDIS_HOST: redis
+      CLAWSKILL_REDIS_PORT: 6379
+      CLAWSKILL_REDIS_DB: 0
+      
+      # GitHub integration (optional)
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      
+      # Logging
+      CLAWSKILL_LOG_LEVEL: info
+      CLAWSKILL_LOG_FORMAT: json
+    ports:
+      - "8080:8080"
+    networks:
+      - clawskill-network
+
+  # Optional: Prometheus for metrics (disabled by default)
+  # prometheus:
+  #   image: prom/prometheus:v2.48.0
+  #   container_name: clawskill-prometheus
+  #   restart: unless-stopped
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - prometheus_data:/prometheus
+  #   networks:
+  #     - clawskill-network
+  #   profiles:
+  #     - monitoring
+
+  # Optional: Grafana for dashboards (disabled by default)
+  # grafana:
+  #   image: grafana/grafana:10.2.2
+  #   container_name: clawskill-grafana
+  #   restart: unless-stopped
+  #   environment:
+  #     GF_SECURITY_ADMIN_USER: admin
+  #     GF_SECURITY_ADMIN_PASSWORD: admin
+  #     GF_USERS_ALLOW_SIGN_UP: "false"
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #   networks:
+  #     - clawskill-network
+  #   profiles:
+  #     - monitoring
+
+networks:
+  clawskill-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  # prometheus_data:
+  #   driver: local
+  # grafana_data:
+  #   driver: local
