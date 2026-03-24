@@ -12,9 +12,9 @@
 #   - api: ClawSkill API server
 
 services:
-  # PostgreSQL Database
+  # PostgreSQL Database with pgvector support
   postgres:
-    image: postgres:16-alpine
+    image: pgvector/pgvector:pg16
     container_name: clawskill-postgres
     restart: unless-stopped
     environment:

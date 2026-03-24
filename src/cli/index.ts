@@ -329,6 +329,159 @@ program
     console.log(`  INSERT INTO api_keys (key, name, scopes) VALUES ('${key}', 'my-key', ARRAY['read','write']);`);
   });
 
+// ====================
+// GitHub Sync command
+// ====================
+program
+  .command('github:sync')
+  .description('Sync skills from GitHub')
+  .option('-o, --org <organization>', 'GitHub organization or user')
+  .option('-t, --topic <topic>', 'Repository topic', 'agent-skill')
+  .option('-l, --limit <number>', 'Max skills to sync', '100')
+  .action(async (options: { org?: string; topic: string; limit: string }) => {
+    const { GitHubSource, GitHubSourceConfig } = await import('../github/sources/github-source');
+    const { Syncer } = await import('../github/syncer/syncer');
+
+    const config: GitHubSourceConfig = {
+      token: process.env.GITHUB_TOKEN,
+      org: options.org,
+      topic: options.topic,
+    };
+
+    const githubSource = new GitHubSource(config);
+    const syncer = new Syncer(githubSource);
+
+    console.log(`\n🔄 Syncing skills from GitHub...`);
+    console.log(`  Topic: ${options.topic}`);
+    if (options.org) console.log(`  Org: ${options.org}`);
+
+    const result = await syncer.sync({ limit: parseInt(options.limit, 10) });
+
+    console.log(`\n✅ Sync completed:`);
+    console.log(`  Total:      ${result.total}`);
+    console.log(`  Added:      ${result.added}`);
+    console.log(`  Updated:    ${result.updated}`);
+    console.log(`  Skipped:    ${result.skipped}`);
+    console.log(`  Failed:     ${result.failed}`);
+    console.log(`  Duration:   ${result.duration}ms`);
+  });
+
+// ====================
+// Security Scan command
+// ====================
+program
+  .command('security:scan <skill>')
+  .description('Scan a skill for security issues')
+  .option('-v, --version <version>', 'Skill version (default: latest)')
+  .option('--secrets', 'Scan for secrets', true)
+  .option('--dependencies', 'Scan dependencies', true)
+  .option('--code', 'Scan code patterns', false)
+  .action(async (skillId: string, options: { version?: string; secrets: boolean; dependencies: boolean; code: boolean }) => {
+    const { SecurityScanner } = await import('../security/scanner/security-scanner');
+    const { SecretScanner } = await import('../security/scanner/secret-scanner');
+    const { DependencyScanner } = await import('../security/scanner/dependency-scanner');
+
+    const secretScanner = new SecretScanner();
+    const dependencyScanner = new DependencyScanner();
+    const scanner = new SecurityScanner({ secretScanner, dependencyScanner });
+
+    console.log(`\n🔒 Scanning ${skillId}${options.version ? `@${options.version}` : ''}...`);
+
+    const result = await scanner.scan({
+      skillId,
+      version: options.version,
+      scanSecrets: options.secrets,
+      scanDependencies: options.dependencies,
+      scanCode: options.code,
+    });
+
+    console.log(`\n📊 Scan Results:`);
+    console.log(`  Status:       ${result.status}`);
+    console.log(`  Total findings: ${result.findings.length}`);
+
+    if (result.severityCounts) {
+      console.log(`  Critical:     ${result.severityCounts.critical || 0}`);
+      console.log(`  High:         ${result.severityCounts.high || 0}`);
+      console.log(`  Medium:       ${result.severityCounts.medium || 0}`);
+      console.log(`  Low:          ${result.severityCounts.low || 0}`);
+    }
+
+    if (result.findings.length > 0) {
+      console.log(`\n🔍 Findings:`);
+      for (const finding of result.findings.slice(0, 10)) {
+        console.log(`  [${finding.severity.toUpperCase()}] ${finding.type}`);
+        console.log(`    ${finding.filePath}:${finding.lineNumber}`);
+        console.log(`    ${finding.description}`);
+      }
+
+      if (result.findings.length > 10) {
+        console.log(`  ... and ${result.findings.length - 10} more findings`);
+      }
+    }
+  });
+
+// ====================
+// Search command (enhanced)
+// ====================
+program
+  .command('search:semantic <query>')
+  .description('Semantic search for skills')
+  .option('-c, --category <category>', 'Filter by category')
+  .option('-l, --language <language>', 'Filter by language')
+  .option('-s, --stars <number>', 'Minimum stars')
+  .option('--limit <number>', 'Max results', '20')
+  .action(async (query: string, options: { category?: string; language?: string; stars?: string; limit: string }) => {
+    const { SemanticSearcher } = await import('../semantic-search/searcher/semantic-searcher');
+    const { RankingEngine } = await import('../semantic-search/ranking/ranking-engine');
+    const { FilterEngine } = await import('../semantic-search/filter/filter-engine');
+
+    const searcher = new SemanticSearcher({
+      apiKey: process.env.OPENAI_API_KEY,
+      model: 'text-embedding-3-small',
+    });
+
+    const rankingEngine = new RankingEngine();
+    const filterEngine = new FilterEngine();
+
+    console.log(`\n🔍 Searching: "${query}"`);
+
+    const results = await searcher.semanticSearch({
+      query,
+      limit: parseInt(options.limit, 10),
+      filters: {
+        category: options.category,
+        language: options.language,
+        minStars: options.stars ? parseInt(options.stars, 10) : undefined,
+      },
+    });
+
+    // Apply filters
+    let filteredResults = results;
+    if (options.category || options.language || options.stars) {
+      filteredResults = await filterEngine.filter(results, {
+        category: options.category,
+        language: options.language,
+        minStars: options.stars ? parseInt(options.stars, 10) : undefined,
+      });
+    }
+
+    // Apply ranking
+    const rankedResults = await rankingEngine.rank(filteredResults, {
+      query,
+      boostFresh: true,
+      boostPopular: true,
+    });
+
+    console.log(`\nFound ${rankedResults.length} results:\n`);
+    for (const result of rankedResults.slice(0, 10)) {
+      console.log(`  ${result.skillId}`);
+      console.log(`    Score:   ${result.score.toFixed(4)}`);
+      console.log(`    Name:    ${result.metadata?.name || 'N/A'}`);
+      console.log(`    Desc:    ${result.metadata?.description || 'N/A'}`);
+      console.log('');
+    }
+  });
+
 export { program };
 
 // Run CLI when executed directly

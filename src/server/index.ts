@@ -12,6 +12,12 @@ import type { FastifyInstance } from 'fastify';
 import { SkillService } from '../core/skill-service';
 import { KyselyRepository } from '../core/kysely-repository';
 import { registerSkillRoutes } from './routes/skill-routes';
+import { registerGitHubRoutes } from './routes/github-routes';
+import { registerSearchRoutes } from './routes/search-routes';
+import { registerSecurityRoutes } from './routes/security-routes';
+import { securityScoreRoutes } from './routes/security-score-routes';
+import { downloadStatsRoutes } from './routes/download-routes';
+import { ratingRoutes } from './routes/rating-routes';
 import { authMiddleware } from './middleware/auth';
 import { config } from './config';
 import { getStorage } from '../core/storage';
@@ -76,6 +82,15 @@ export async function createServer(options: ServerOptions = {}): Promise<Fastify
   const repo = options.inMemory ? new InMemorySkillRepository() : new KyselyRepository();
   const skillService = new SkillService(repo);
   await fastify.register(registerSkillRoutes, { prefix: '/api/v1', skillService });
+
+  // Register feature module routes
+  await fastify.register(registerGitHubRoutes, { prefix: '/api/v1' });
+  await fastify.register(registerSearchRoutes, { prefix: '/api/v1' });
+  await fastify.register(registerSecurityRoutes, { prefix: '/api/v1' });
+  // TODO: 临时注释，等待集成测试
+  // await fastify.register(securityScoreRoutes, { prefix: '/api/v1' });
+  // await fastify.register(downloadStatsRoutes, { prefix: '/api/v1' });
+  // await fastify.register(ratingRoutes, { prefix: '/api/v1' });
 
   // Initialize storage
   const storage = getStorage();
