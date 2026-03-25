@@ -1,187 +1,284 @@
 # ClawSkill - AI Agent Skill Package Manager
 
+<div align="center">
+
+![ClawSkill Logo](assets/logo.png)
+
+[![npm version](https://badge.fury.io/js/clawskill.svg)](https://www.npmjs.com/package/clawskill)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/node/v/clawskill)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org/)
+[![Build Status](https://github.com/openclaw/clawskill/workflows/CI/badge.svg)](https://github.com/openclaw/clawskill/actions)
+[![codecov](https://codecov.io/gh/openclaw/clawskill/branch/main/graph/badge.svg)](https://codecov.io/gh/openclaw/clawskill)
+[![Downloads](https://img.shields.io/npm/dm/clawskill.svg)](https://www.npmjs.com/package/clawskill)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![Discord](https://img.shields.io/discord/123456789012345678?logo=discord&logoColor=white)](https://discord.gg/clawskill)
+[![Code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-> **🎯 ClawSkill 是独立产品 - AI Agent 技能包管理器与注册中心**
+**🎯 The Ultimate Skill Package Manager for AI Agents**
 
-> ⚠️ **重要说明**: ClawSkill 是独立的产品，不属于 OpenMind 公司或任何其他组织的功能模块。它是一个开源的 AI Agent 技能生态平台，旨在为全球 AI Agent 开发者和用户提供统一的技能管理和分发服务。
+[Quick Start](#-quick-start) • [Documentation](#-documentation) • [API](#-api-documentation) • [Contributing](#-contributing) • [Support](#-support)
 
-## ✨ 功能特性
+</div>
 
-### 1. 🔗 GitHub 源集成 (Priority #1)
-从 GitHub 自动发现、同步和管理 AI Agent 技能仓库
-- 支持组织和用户仓库搜索
-- 主题和语言过滤
-- 自动解析 SKILL.md 元数据
-- 实时监听 GitHub 事件
-- 版本管理和标签追踪
+---
 
-### 2. 📦 依赖管理 (Priority #2)
-智能的技能依赖解析和管理
-- 依赖图构建和拓扑排序
-- 版本冲突检测
-- 自动安装命令生成
-- 支持多平台（npm, yarn, pnpm, bun）
-- 依赖树可视化
+## 📖 Table of Contents
 
-### 3. 🎨 Web UI (Priority #3)
-现代化的用户界面
-- 技能浏览和搜索
-- 技能详情展示
-- 仪表板和统计
-- 响应式设计
-- 基于 React + Vite
+- [About](#-about)
+- [Features](#-features)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Usage](#-usage)
+- [Configuration](#-configuration)
+- [API Documentation](#-api-documentation)
+- [Architecture](#-architecture)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Security](#-security)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [Support](#-support)
+- [License](#-license)
+- [Acknowledgments](#-acknowledgments)
 
-### 4. 🔍 语义搜索 (Priority #4)
-基于向量嵌入的智能搜索
-- OpenAI Embeddings 集成
-- 语义相似度匹配
-- 多维度过滤（分类、语言、星数）
-- 智能排序引擎
-- 技能推荐系统
-- 热门搜索趋势
+---
 
-### 5. 🚀 技能搜索优化 (Priority #5)
-高性能搜索引擎
-- 全文搜索支持
-- 搜索历史记录
-- 相关性评分
-- 缓存优化
-- 分页和排序
+## 🌟 About
 
-### 6. 🛡️ 安全扫描 (Priority #6)
-全面的安全审计工具
-- 密钥泄漏检测
-- 依赖漏洞扫描
-- 恶意代码检测
-- 安全报告生成
-- 严重性分级
-- 修复建议
+> **ClawSkill** is a comprehensive skill package manager and registry designed for AI Agents. It provides a unified platform for discovering, managing, and distributing AI skills across different agent frameworks like OpenClaw, LangChain, AutoGPT, and more.
 
-## 📦 安装
+### Why ClawSkill?
+
+🤖 **Agent-Centric**: Built specifically for AI agents and their skill ecosystem
+
+🔍 **Smart Discovery**: Advanced search with semantic understanding and AI-powered recommendations
+
+📦 **Dependency Management**: Automatic dependency resolution with conflict detection
+
+🛡️ **Security First**: Built-in security scanning for vulnerabilities and secrets
+
+🌐 **Open Standards**: Compatible with AgentSkills.io and other open standards
+
+---
+
+## ✨ Features
+
+### 🔗 GitHub Integration (Priority #1)
+Automatic discovery and synchronization of AI Agent skill repositories from GitHub
+- Organization and user repository search
+- Topic and language filtering
+- Automatic SKILL.md metadata parsing
+- Real-time GitHub event monitoring
+- Version management and tag tracking
+
+### 📦 Dependency Management (Priority #2)
+Intelligent skill dependency resolution and management
+- Dependency graph construction and topological sorting
+- Version conflict detection
+- Automatic installation command generation
+- Multi-platform support (npm, yarn, pnpm, bun)
+- Dependency tree visualization
+
+### 🎨 Modern Web UI (Priority #3)
+Beautiful and responsive user interface
+- Skill browsing and search
+- Skill detail pages
+- Dashboard and statistics
+- Responsive design
+- Built with React + Vite
+
+### 🔍 Semantic Search (Priority #4)
+AI-powered intelligent search
+- OpenAI Embeddings integration
+- Semantic similarity matching
+- Multi-dimensional filtering (category, language, stars)
+- Smart ranking engine
+- Skill recommendation system
+- Popular search trends
+
+### 🚀 High-Performance Search (Priority #5)
+Lightning-fast search engine
+- Full-text search support
+- Search history
+- Relevance scoring
+- Cache optimization
+- Pagination and sorting
+
+### 🛡️ Security Scanning (Priority #6)
+Comprehensive security audit tools
+- Secret leakage detection
+- Dependency vulnerability scanning
+- Malicious code detection
+- Security report generation
+- Severity classification
+- Fix recommendations
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+
+- **Node.js** 22 or higher
+- **PostgreSQL** 14 or higher
+- **Redis** 7 or higher (optional, for caching)
+- **pnpm** 10 or higher
+
+### Install via npm
 
 ```bash
-# 使用 pnpm 安装
-pnpm install
-
-# 或使用 npm
-npm install
-
-# 或使用 yarn
-yarn install
+npm install -g clawskill
 ```
 
-## 🚀 快速开始
+### Install via pnpm
 
-### 前置要求
+```bash
+pnpm add -g clawskill
+```
 
-- Node.js 18+ 
-- PostgreSQL 14+
-- Redis 7+ (可选，用于缓存)
+### Install from Source
 
-### 1. 配置环境变量
+```bash
+# Clone the repository
+git clone https://github.com/openclaw/clawskill.git
+cd clawskill
 
-复制 `.env.example` 到 `.env` 并配置：
+# Install dependencies
+pnpm install
+
+# Build the project
+pnpm build
+
+# Link globally
+pnpm link --global
+```
+
+---
+
+## 🚀 Quick Start
+
+### 1. Configuration
+
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-编辑 `.env` 文件：
+Edit `.env` with your configuration:
 
 ```bash
-# 数据库配置
+# Database
 DATABASE_URL=postgresql://clawskill:clawskill_dev@localhost:5432/clawskill
 
-# GitHub Token (可选，用于 GitHub 集成)
+# GitHub Token (optional)
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-# OpenAI API Key (可选，用于语义搜索)
+# OpenAI API Key (optional, for semantic search)
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-### 2. 启动数据库
-
-使用 Docker Compose 启动 PostgreSQL：
+### 2. Start Database
 
 ```bash
 docker compose up -d postgres
 ```
 
-### 3. 运行数据库迁移
+### 3. Run Migrations
 
 ```bash
 pnpm db:migrate
 ```
 
-### 4. 启动服务
+### 4. Start the Server
 
 ```bash
-# 开发模式
+# Development mode
 pnpm dev
 
-# 生产模式
-pnpm build
-pnpm start
+# Production mode
+pnpm build && pnpm start
 ```
 
-服务将在 `http://localhost:8080` 启动
+The server will be available at `http://localhost:8080`
 
-API 文档: `http://localhost:8080/docs`
+API Documentation: `http://localhost:8080/docs`
 
-### 使用 CLI
+---
+
+## 💻 Usage
+
+### CLI Commands
+
+#### Search Skills
 
 ```bash
-# 搜索技能
 clawskill search "weather"
+```
 
-# 查看技能详情
+#### View Skill Details
+
+```bash
 clawskill show openclaw/weather
+```
 
-# 安装技能
+#### Install a Skill
+
+```bash
 clawskill install openclaw/weather -d ./skills/weather
+```
 
-# 发布技能
+#### Publish a Skill
+
+```bash
 clawskill publish ./my-skill --api-key YOUR_KEY
+```
 
-# 同步 GitHub 技能
+#### Sync GitHub Skills
+
+```bash
 clawskill github:sync --topic agent-skill --limit 100
+```
 
-# 安全扫描
+#### Security Scan
+
+```bash
 clawskill security:scan openclaw/weather --secrets --dependencies
+```
 
-# 语义搜索
+#### Semantic Search
+
+```bash
 clawskill search:semantic "web scraping" --category productivity --limit 20
 ```
 
-### API 使用示例
+### API Usage
 
-#### 搜索技能
+#### Search Skills
 
 ```bash
-# 全文搜索
+# Full-text search
 curl http://localhost:8080/api/v1/search?q=weather
 
-# 语义搜索
+# Semantic search
 curl -X POST http://localhost:8080/api/v1/search/semantic \
   -H "Content-Type: application/json" \
   -d '{"query": "web scraping", "limit": 20}'
 ```
 
-#### 获取技能详情
+#### Get Skill Details
 
 ```bash
-# 获取技能信息
+# Get skill information
 curl http://localhost:8080/api/v1/skills/openclaw/weather
 
-# 获取 Skill URL (AI Agent 接口)
+# Get Skill URL (AI Agent interface)
 curl http://localhost:8080/skill/openclaw/weather
 curl http://localhost:8080/skill/openclaw/weather@1.0.0
 ```
 
-#### 创建技能
+#### Create Skill
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/skills \
@@ -195,10 +292,10 @@ curl -X POST http://localhost:8080/api/v1/skills \
   }'
 ```
 
-#### 安全扫描
+#### Security Scan
 
 ```bash
-# 启动完整扫描
+# Start full scan
 curl -X POST http://localhost:8080/api/v1/security/scan \
   -H "Content-Type: application/json" \
   -d '{
@@ -210,11 +307,11 @@ curl -X POST http://localhost:8080/api/v1/security/scan \
     }
   }'
 
-# 获取扫描结果
+# Get scan results
 curl http://localhost:8080/api/v1/security/scan/SCAN_ID
 ```
 
-### 启动 Web UI
+### Web UI
 
 ```bash
 cd web-ui
@@ -222,35 +319,19 @@ pnpm install
 pnpm dev
 ```
 
-Web UI 将在 `http://localhost:5173` 启动
+The Web UI will be available at `http://localhost:5173`
 
-## 🏗️ 架构
+---
 
-```
-clawskill/
-├── src/
-│   ├── core/           # 核心服务（数据库、存储、技能管理）
-│   ├── server/         # Fastify API 服务器
-│   ├── cli/            # 命令行工具
-│   ├── github/         # GitHub 源集成
-│   ├── dependency/     # 依赖管理
-│   ├── semantic-search/# 语义搜索
-│   ├── security/       # 安全扫描
-│   └── types/          # TypeScript 类型定义
-├── web-ui/             # React Web 应用
-├── migrations/         # 数据库迁移
-└── tests/              # 测试文件
-```
+## ⚙️ Configuration
 
-## 🔧 配置
+### Environment Variables
 
-### 环境变量
-
-创建 `.env` 文件在项目根目录：
+Create a `.env` file in the project root:
 
 ```bash
 # ========================================
-# 数据库配置
+# Database Configuration
 # ========================================
 DATABASE_URL=postgresql://clawskill:clawskill_dev@localhost:5432/clawskill
 CLAWSKILL_DB_HOST=localhost
@@ -261,7 +342,7 @@ CLAWSKILL_DB_NAME=clawskill
 CLAWSKILL_DB_SSLMODE=disable
 
 # ========================================
-# Redis 缓存配置
+# Redis Cache Configuration
 # ========================================
 REDIS_URL=redis://localhost:6379
 CLAWSKILL_REDIS_HOST=localhost
@@ -269,26 +350,26 @@ CLAWSKILL_REDIS_PORT=6379
 CLAWSKILL_REDIS_DB=0
 
 # ========================================
-# GitHub 集成
+# GitHub Integration
 # ========================================
-# GitHub Personal Access Token (需要仓库访问权限)
-# 获取方式: https://github.com/settings/tokens
-# 权限: repo (read), read:org, read:packages
+# GitHub Personal Access Token
+# Get it from: https://github.com/settings/tokens
+# Permissions: repo (read), read:org, read:packages
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # ========================================
-# OpenAI API (用于语义搜索)
+# OpenAI API (for semantic search)
 # ========================================
-# OpenAI API Key (用于生成嵌入向量)
-# 获取方式: https://platform.openai.com/api-keys
-# 需要: text-embedding-ada-002 或 text-embedding-3-small/large 模型权限
+# OpenAI API Key
+# Get it from: https://platform.openai.com/api-keys
+# Required models: text-embedding-ada-002 or text-embedding-3-small/large
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-# 可选: 自定义 OpenAI 基础 URL (如果使用代理)
+# Optional: Custom OpenAI base URL (for proxy)
 # OPENAI_BASE_URL=https://api.openai.com/v1
 
 # ========================================
-# 服务器配置
+# Server Configuration
 # ========================================
 CLAWSKILL_HOST=0.0.0.0
 CLAWSKILL_PORT=8080
@@ -296,153 +377,187 @@ CLAWSKILL_MODE=development
 CLAWSKILL_LOG_LEVEL=info
 CLAWSKILL_LOG_FORMAT=json
 
-# CORS 允许的来源 (逗号分隔)
+# CORS allowed origins (comma-separated)
 CLAWSKILL_CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 
-# 速率限制 (每分钟请求数)
+# Rate limiting (requests per minute)
 CLAWSKILL_RATE_LIMIT_MAX=100
 
 # ========================================
-# 安全配置
+# Security Configuration
 # ========================================
-# JWT Secret (用于 API 认证)
+# JWT Secret (for API authentication)
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
 
-# API 管理员密钥
+# API Admin Key
 CLAWSKILL_API_KEY=your-api-key-for-admin-operations
 ```
 
-### 获取 GITHUB_TOKEN
+### Getting GitHub Token
 
-1. 访问 https://github.com/settings/tokens
-2. 点击 "Generate new token" → "Generate new token (classic)"
-3. 填写 Note (如 "ClawSkill")
-4. 选择过期时间 (建议选择 90 天)
-5. 勾选权限:
-   - ✅ `repo` (完整仓库访问权限)
-   - ✅ `read:org` (读取组织信息)
-   - ✅ `read:packages` (读取包信息)
-6. 点击 "Generate token"
-7. **立即复制 token** (只显示一次!)
+1. Visit https://github.com/settings/tokens
+2. Click "Generate new token" → "Generate new token (classic)"
+3. Fill in Note (e.g., "ClawSkill")
+4. Select expiration (recommended: 90 days)
+5. Check permissions:
+   - ✅ `repo` (full repository access)
+   - ✅ `read:org` (read organization info)
+   - ✅ `read:packages` (read package info)
+6. Click "Generate token"
+7. **Copy the token immediately** (shown only once!)
 
-### 获取 OPENAI_API_KEY
+### Getting OpenAI API Key
 
-1. 访问 https://platform.openai.com/api-keys
-2. 登录或注册 OpenAI 账户
-3. 点击 "Create new secret key"
-4. 填写描述 (如 "ClawSkill Semantic Search")
-5. 点击 "Create secret key"
-6. **立即复制 key** (只显示一次!)
+1. Visit https://platform.openai.com/api-keys
+2. Log in or sign up for OpenAI
+3. Click "Create new secret key"
+4. Fill in description (e.g., "ClawSkill Semantic Search")
+5. Click "Create secret key"
+6. **Copy the key immediately** (shown only once!)
 
-### 服务器配置
+---
 
-编辑 `src/server/config.ts`:
+## 📚 API Documentation
 
-```typescript
-export const config = {
-  port: 8080,
-  host: '0.0.0.0',
-  corsOrigins: ['http://localhost:5173'],
-  rateLimitMax: 100,
-  logLevel: 'info',
-};
+### Core API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/skills` | List all skills |
+| GET | `/api/v1/skills/:skillId` | Get skill details |
+| POST | `/api/v1/skills` | Create a new skill |
+| PUT | `/api/v1/skills/:skillId` | Update a skill |
+| DELETE | `/api/v1/skills/:skillId` | Delete a skill |
+
+### GitHub Integration API
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/github/skills` | List GitHub skills |
+| GET | `/api/v1/github/skills/:owner/:repo` | Get GitHub skill details |
+| GET | `/api/v1/github/skills/:owner/:repo/skill-md` | Get SKILL.md |
+| POST | `/api/v1/github/sync` | Sync GitHub skills |
+| GET | `/api/v1/github/skills/:owner/:repo/versions` | Get version list |
+
+### Search API
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/search` | Full-text search |
+| POST | `/api/v1/search/semantic` | Semantic search |
+| GET | `/api/v1/recommendations/:skillId` | Skill recommendations |
+| GET | `/api/v1/search/stats` | Search statistics |
+| GET | `/api/v1/search/trending` | Trending skills |
+
+### Security Scanning API
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/security/scan` | Start scan |
+| GET | `/api/v1/security/scan/:scanId` | Get scan results |
+| GET | `/api/v1/security/report/:skillId/:version` | Get security report |
+| POST | `/api/v1/security/scan-secrets` | Scan for secrets |
+| POST | `/api/v1/security/scan-dependencies` | Scan dependencies |
+| GET | `/api/v1/security/stats/:skillId` | Get statistics |
+
+### Agent-Friendly Endpoints
+
+| Endpoint | Description | Format |
+|----------|-------------|--------|
+| `/skill/:namespace/:name` | Get skill (latest) | JSON |
+| `/skill/:namespace/:name@:version` | Get skill (specific version) | JSON |
+
+**Example Response:**
+
+```json
+{
+  "id": "openclaw/weather@1.0.0",
+  "name": "weather",
+  "version": "1.0.0",
+  "description": "Weather forecasting via wttr.in",
+  "author": "OpenClaw Team",
+  "license": "MIT",
+  "skill_md_url": "https://raw.githubusercontent.com/openclaw/openclaw/master/skills/weather/SKILL.md",
+  "install_command": "openclaw clawhub install weather"
+}
 ```
 
-## 📚 API 文档
+For full API documentation, visit `/docs` when the server is running.
 
-### 核心 API
+---
 
-- `GET /api/v1/skills` - 列出技能
-- `GET /api/v1/skills/:skillId` - 获取技能详情
-- `POST /api/v1/skills` - 创建技能
-- `PUT /api/v1/skills/:skillId` - 更新技能
-- `DELETE /api/v1/skills/:skillId` - 删除技能
+## 🏗️ Architecture
 
-### GitHub 集成 API
+```
+clawskill/
+├── src/
+│   ├── cli/              # CLI Tool
+│   ├── core/             # Core Services
+│   │   ├── db.ts         # Database connection
+│   │   ├── storage.ts    # Package storage
+│   │   └── skill-service.ts  # Skill management
+│   ├── server/           # Fastify API Server
+│   ├── github/           # GitHub integration
+│   ├── dependency/       # Dependency management
+│   ├── semantic-search/  # Semantic search
+│   ├── security/         # Security scanning
+│   └── types/            # TypeScript types
+├── web-ui/               # React Web Application
+├── migrations/           # Database migrations
+├── tests/                # Test files
+└── docs/                 # Documentation
+```
 
-- `GET /api/v1/github/skills` - 列出 GitHub 技能
-- `GET /api/v1/github/skills/:owner/:repo` - 获取技能详情
-- `GET /api/v1/github/skills/:owner/:repo/skill-md` - 获取 SKILL.md
-- `POST /api/v1/github/sync` - 同步 GitHub 技能
-- `GET /api/v1/github/skills/:owner/:repo/versions` - 获取版本列表
+---
 
-### 搜索 API
-
-- `GET /api/v1/search` - 全文搜索
-- `POST /api/v1/search/semantic` - 语义搜索
-- `GET /api/v1/recommendations/:skillId` - 技能推荐
-- `GET /api/v1/search/stats` - 搜索统计
-- `GET /api/v1/search/trending` - 热门技能
-
-### 安全扫描 API
-
-- `POST /api/v1/security/scan` - 启动扫描
-- `GET /api/v1/security/scan/:scanId` - 获取扫描结果
-- `GET /api/v1/security/report/:skillId/:version` - 获取安全报告
-- `POST /api/v1/security/scan-secrets` - 扫描密钥
-- `POST /api/v1/security/scan-dependencies` - 扫描依赖
-- `GET /api/v1/security/stats/:skillId` - 获取统计
-
-## 🧪 测试
+## 🧪 Testing
 
 ```bash
-# 运行所有测试
+# Run all tests
 pnpm test
 
-# 监听模式
+# Watch mode
 pnpm test:watch
 
-# 覆盖率报告
+# Coverage report
 pnpm test:coverage
 
-# 类型检查
+# Type checking
 pnpm typecheck
 
-# 代码检查
+# Linting
 pnpm lint
 ```
 
-## 📊 数据库
+---
 
-运行迁移：
+## 🚀 Deployment
 
-```bash
-pnpm db:migrate
-```
+### Docker Deployment
 
-填充种子数据：
+#### Using Docker Compose
 
 ```bash
-pnpm db:seed
-```
-
-## 🚀 部署
-
-### Docker 部署
-
-#### 1. 使用 Docker Compose
-
-```bash
-# 启动所有服务（PostgreSQL + Redis + ClawSkill）
+# Start all services (PostgreSQL + Redis + ClawSkill)
 docker compose up -d
 
-# 查看日志
+# View logs
 docker compose logs -f clawskill
 
-# 停止服务
+# Stop services
 docker compose down
 
-# 停止并删除数据卷
+# Stop and remove volumes
 docker compose down -v
 ```
 
-#### 2. 单独构建和运行
+#### Build and Run Manually
 
 ```bash
-# 构建 Docker 镜像
+# Build Docker image
 docker build -t clawskill:latest .
 
-# 运行容器
+# Run container
 docker run -d \
   --name clawskill \
   -p 8080:8080 \
@@ -451,95 +566,30 @@ docker run -d \
   clawskill:latest
 ```
 
-#### 3. Docker Compose 配置
+### Local Deployment
 
-`docker-compose.yml` 示例：
-
-```yaml
-version: '3.8'
-
-services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: clawskill-postgres
-    environment:
-      POSTGRES_USER: clawskill
-      POSTGRES_PASSWORD: clawskill_dev
-      POSTGRES_DB: clawskill
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U clawskill"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
-    container_name: clawskill-redis
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  clawskill:
-    build: .
-    container_name: clawskill
-    ports:
-      - "8080:8080"
-    environment:
-      - CLAWSKILL_DB_HOST=postgres
-      - CLAWSKILL_DB_PASSWORD=clawskill_dev
-      - CLAWSKILL_REDIS_HOST=redis
-      - NODE_ENV=production
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - ./storage:/app/storage
-    restart: unless-stopped
-
-volumes:
-  postgres-data:
-```
-
-### 本地部署
-
-#### 1. 使用 PM2（生产环境）
+#### Using PM2
 
 ```bash
-# 安装 PM2
+# Install PM2
 npm install -g pm2
 
-# 构建项目
+# Build project
 pnpm build
 
-# 启动服务
+# Start service
 pm2 start dist/cli/index.js --name clawskill -- serve
 
-# 查看状态
+# View status
 pm2 status
 
-# 查看日志
+# View logs
 pm2 logs clawskill
-
-# 重启服务
-pm2 restart clawskill
-
-# 停止服务
-pm2 stop clawskill
 ```
 
-#### 2. 使用 systemd（Linux）
+#### Using systemd
 
-创建 `/etc/systemd/system/clawskill.service`：
+Create `/etc/systemd/system/clawskill.service`:
 
 ```ini
 [Unit]
@@ -559,164 +609,145 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
-启用和启动服务：
-
 ```bash
-# 重载 systemd
 sudo systemctl daemon-reload
-
-# 启用服务
 sudo systemctl enable clawskill
-
-# 启动服务
 sudo systemctl start clawskill
-
-# 查看状态
-sudo systemctl status clawskill
-
-# 查看日志
-sudo journalctl -u clawskill -f
 ```
 
-#### 3. 使用 Nginx 反向代理
+### Cloud Platforms
 
-Nginx 配置 `/etc/nginx/sites-available/clawskill`：
+- **Vercel**: `vercel --prod`
+- **Render**: Connect GitHub repo and deploy
+- **Railway**: `railway up`
 
-```nginx
-server {
-    listen 80;
-    server_name clawskill.example.com;
+### Production Checklist
 
-    location / {
-        proxy_pass http://localhost:8080;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-
-    # 静态文件缓存
-    location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
-        proxy_pass http://localhost:8080;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-    }
-}
-```
-
-启用配置：
-
-```bash
-# 创建符号链接
-sudo ln -s /etc/nginx/sites-available/clawskill /etc/nginx/sites-enabled/
-
-# 测试配置
-sudo nginx -t
-
-# 重载 Nginx
-sudo systemctl reload nginx
-```
-
-### 云平台部署
-
-#### Vercel 部署
-
-1. 创建 `vercel.json`：
-
-```json
-{
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/dist/cli/index.js"
-    }
-  ]
-}
-```
-
-2. 部署：
-
-```bash
-vercel --prod
-```
-
-#### Render 部署
-
-1. 在 Render 创建 Web Service
-2. 连接 GitHub 仓库
-3. 配置环境变量
-4. 部署
-
-#### Railway 部署
-
-```bash
-# 安装 Railway CLI
-npm install -g @railway/cli
-
-# 登录
-railway login
-
-# 初始化项目
-railway init
-
-# 添加 PostgreSQL
-railway add postgresql
-
-# 添加 Redis
-railway add redis
-
-# 部署
-railway up
-```
-
-### 生产环境检查清单
-
-- [ ] 修改默认密钥（JWT_SECRET, API Key）
-- [ ] 启用 HTTPS（使用 Let's Encrypt）
-- [ ] 配置防火墙规则
-- [ ] 设置数据库备份策略
-- [ ] 配置日志聚合（如 ELK Stack）
-- [ ] 启用监控和告警（Prometheus + Grafana）
-- [ ] 配置速率限制
-- [ ] 启用 CORS 保护
-- [ ] 配置 CDN（如 Cloudflare）
-- [ ] 设置自动更新策略
-
-## 🔐 安全
-
-- API Key 认证
-- 速率限制
-- CORS 保护
-- Helmet 安全头
-- SQL 注入防护
-- XSS 防护
-
-## 🤝 贡献
-
-欢迎贡献！请查看 [CONTRIBUTING.md](./CONTRIBUTING.md) 了解详情。
-
-## 📄 许可证
-
-[MIT](./LICENSE)
-
-## 🙏 致谢
-
-- [OpenClaw](https://github.com/openclaw) - AI Agent 平台
-- [Fastify](https://fastify.io/) - 高性能 Web 框架
-- [Kysely](https://kysely.dev/) - 类型安全的 SQL 查询构建器
-- [Octokit](https://github.com/octokit) - GitHub API 客户端
+- [ ] Change default secrets (JWT_SECRET, API Key)
+- [ ] Enable HTTPS (Let's Encrypt)
+- [ ] Configure firewall rules
+- [ ] Setup database backup strategy
+- [ ] Configure log aggregation (ELK Stack)
+- [ ] Enable monitoring and alerting (Prometheus + Grafana)
+- [ ] Configure rate limiting
+- [ ] Enable CORS protection
+- [ ] Configure CDN (Cloudflare)
+- [ ] Setup automatic updates
 
 ---
 
-Made with ❤️ by OpenClaw Team
+## 🔐 Security
+
+- ✅ API Key authentication
+- ✅ Rate limiting
+- ✅ CORS protection
+- ✅ Helmet security headers
+- ✅ SQL injection prevention
+- ✅ XSS protection
+- ✅ Secret scanning
+- ✅ Dependency vulnerability scanning
+
+---
+
+## 🗺️ Roadmap
+
+### v0.2.0 (Q2 2026)
+
+- [ ] Skill marketplace with ratings and reviews
+- [ ] Skill versioning and rollback
+- [ ] Advanced analytics dashboard
+- [ ] Multi-language support
+
+### v0.3.0 (Q3 2026)
+
+- [ ] Skill auto-discovery from multiple sources
+- [ ] Skill testing framework
+- [ ] CI/CD integration
+- [ ] Mobile apps (iOS/Android)
+
+### v1.0.0 (Q4 2026)
+
+- [ ] Enterprise features (SSO, RBAC)
+- [ ] Advanced security scanning
+- [ ] Custom skill templates
+- [ ] Global CDN
+
+See [ROADMAP.md](./ROADMAP.md) for more details.
+
+---
+
+## 🤝 Contributing
+
+We welcome all forms of contributions!
+
+### Getting Started
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+---
+
+## 📖 Documentation
+
+- [README](./README.md) - This file
+- [API Documentation](./docs/API.md) - API reference
+- [Developer Guide](./docs/DEVELOPER.md) - Development guide
+- [User Guide](./docs/USER-GUIDE.md) - User documentation
+- [Quick Start](./QUICKSTART.md) - 5-minute tutorial
+
+---
+
+## 🆘 Support
+
+- 📚 [Documentation](./SUPPORT.md)
+- 💬 [Discord](https://discord.gg/clawskill)
+- 📝 [GitHub Discussions](https://github.com/openclaw/clawskill/discussions)
+- 🐛 [GitHub Issues](https://github.com/openclaw/clawskill/issues)
+
+---
+
+## 📊 Project Stats
+
+<div align="center">
+
+![GitHub Stars](https://img.shields.io/github/stars/openclaw/clawskill?style=social)
+![GitHub Forks](https://img.shields.io/github/forks/openclaw/clawskill?style=social)
+![GitHub Issues](https://img.shields.io/github/issues/openclaw/clawskill)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/openclaw/clawskill)
+![npm weekly downloads](https://img.shields.io/npm/dw/clawskill)
+
+</div>
+
+---
+
+## 📄 License
+
+[MIT](./LICENSE) © OpenClaw Team
+
+---
+
+## 🙏 Acknowledgments
+
+Special thanks to:
+
+- [OpenClaw](https://github.com/openclaw) - AI Agent platform
+- [Fastify](https://fastify.io/) - High-performance web framework
+- [Kysely](https://kysely.dev/) - Type-safe SQL query builder
+- [Vitest](https://vitest.dev/) - Blazing fast test framework
+- [TypeScript](https://www.typescriptlang.org/) - JavaScript that scales
+- All [contributors](https://github.com/openclaw/clawskill/graphs/contributors)
+
+---
+
+<div align="center">
+
+**Made with ❤️ by OpenClaw Team**
+
+[⬆ Back to top](#clawskill---ai-agent-skill-package-manager)
+
+</div>
