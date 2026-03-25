@@ -24,3 +24,6 @@ coverage/
 
 # Logs
 *.log
+
+# Test reports
+test-report.md
