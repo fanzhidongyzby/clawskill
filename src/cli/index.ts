@@ -13,6 +13,14 @@ import { createApiKey, generateApiKey } from '../server/middleware/auth';
 import { readFile, readdir } from 'fs/promises';
 import { join, relative } from 'path';
 import { existsSync } from 'fs';
+import { loginCommand } from './commands/login';
+import { logoutCommand } from './commands/logout';
+import { whoamiCommand } from './commands/whoami';
+import { listInstalledCommand } from './commands/list';
+import { updateCommand } from './commands/update';
+import { uninstallCommand } from './commands/uninstall';
+import { versionCommand } from './commands/version';
+import { rollbackCommand } from './commands/rollback';
 
 const VERSION = process.env.npm_package_version ?? '0.1.0';
 
@@ -481,6 +489,18 @@ program
       console.log('');
     }
   });
+
+// ====================
+// 新增命令注册
+// ====================
+program.addCommand(loginCommand);
+program.addCommand(logoutCommand);
+program.addCommand(whoamiCommand);
+program.addCommand(listInstalledCommand);
+program.addCommand(updateCommand);
+program.addCommand(uninstallCommand);
+program.addCommand(versionCommand);
+program.addCommand(rollbackCommand);
 
 export { program };
 

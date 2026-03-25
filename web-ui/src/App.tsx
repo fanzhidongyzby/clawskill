@@ -1,10 +1,13 @@
 import React from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
-import { Search, LayoutDashboard, BookOpen, Shield, Settings } from 'lucide-react';
+import { Search, LayoutDashboard, BookOpen, Shield, Settings, Package, User } from 'lucide-react';
 import HomePage from './pages/HomePage';
 import SearchPage from './pages/SearchPage';
 import SkillDetailPage from './pages/SkillDetailPage';
 import DashboardPage from './pages/DashboardPage';
+import Admin from './pages/Admin';
+import SkillBrowse from './pages/SkillBrowse';
+import SkillManage from './pages/SkillManage';
 
 function App() {
   return (
@@ -29,6 +32,13 @@ function App() {
                 <span>首页</span>
               </Link>
               <Link
+                to="/browse"
+                className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition"
+              >
+                <Package className="w-4 h-4" />
+                <span>技能浏览</span>
+              </Link>
+              <Link
                 to="/search"
                 className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition"
               >
@@ -36,11 +46,25 @@ function App() {
                 <span>搜索</span>
               </Link>
               <Link
-                to="/dashboard"
+                to="/manage"
                 className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition"
               >
                 <BookOpen className="w-4 h-4" />
                 <span>我的技能</span>
+              </Link>
+              <Link
+                to="/dashboard"
+                className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition"
+              >
+                <Settings className="w-4 h-4" />
+                <span>仪表盘</span>
+              </Link>
+              <Link
+                to="/admin"
+                className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition"
+              >
+                <Shield className="w-4 h-4" />
+                <span>管理</span>
               </Link>
             </nav>
 
@@ -60,9 +84,12 @@ function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/browse" element={<SkillBrowse />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/skill/:namespace/:name" element={<SkillDetailPage />} />
+          <Route path="/manage" element={<SkillManage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>
 

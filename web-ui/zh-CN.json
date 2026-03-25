@@ -1,0 +1,42 @@
+{
+  "name": "openclaw-skill-platform-frontend",
+  "version": "1.0.0",
+  "description": "OpenClaw 技能平台前端 - 完整中文本地化版本",
+  "homepage": "http://localhost:3000",
+  "keywords": [
+    "openclaw",
+    "技能平台",
+    "技能市场",
+    "前端",
+    "React",
+    "TypeScript"
+  ],
+  "author": "OpenClaw 团队",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openclaw/skill-platform"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test": "vitest",
+    "i18n:extract": "i18next-extract"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
+    "axios": "^1.7.2",
+    "zustand": "^4.5.2",
+    "antd": "^5.20.0",
+    "@ant-design/icons": "^5.4.0",
+    "react-query": "^3.39.3",
+    "i18next": "^23.14.0",
+    "react-i18next": "^14.1.0",
+    "dayjs": "^1.11.12",
+    "dayjs/locale/zh-cn": "^1.11.12"
+  }
+}

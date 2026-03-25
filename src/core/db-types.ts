@@ -12,6 +12,7 @@ export interface SkillsTable {
   author: string;
   license: string;
   version: string;
+  latest_version: string | null;
   keywords: string[]; // JSONB array
   categories: string[]; // JSONB array
   homepage: string | null;

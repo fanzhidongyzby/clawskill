@@ -15,6 +15,9 @@ import { registerSkillRoutes } from './routes/skill-routes';
 import { registerGitHubRoutes } from './routes/github-routes';
 import { registerSearchRoutes } from './routes/search-routes';
 import { registerSecurityRoutes } from './routes/security-routes';
+import { registerAuthRoutes } from './routes/auth-routes';
+import { registerVersionRoutes } from './routes/version-routes';
+import { registerLocalSkillsRoutes } from './routes/local-skills-routes';
 import { securityScoreRoutes } from './routes/security-score-routes';
 import { downloadStatsRoutes } from './routes/download-routes';
 import { ratingRoutes } from './routes/rating-routes';
@@ -87,6 +90,10 @@ export async function createServer(options: ServerOptions = {}): Promise<Fastify
   await fastify.register(registerGitHubRoutes, { prefix: '/api/v1' });
   await fastify.register(registerSearchRoutes, { prefix: '/api/v1' });
   await fastify.register(registerSecurityRoutes, { prefix: '/api/v1' });
+  await fastify.register(registerAuthRoutes, { prefix: '/api/v1', skillService });
+  await fastify.register(registerVersionRoutes, { prefix: '/api/v1', skillService });
+  await fastify.register(registerLocalSkillsRoutes, { prefix: '/api/v1', skillService });
+
   // TODO: 临时注释，等待集成测试
   // await fastify.register(securityScoreRoutes, { prefix: '/api/v1' });
   // await fastify.register(downloadStatsRoutes, { prefix: '/api/v1' });

@@ -189,7 +189,6 @@ export class KyselyRepository implements SkillRepository {
     await this.db
       .insertInto('versions')
       .values({
-        id: versionId,
         skill_id: version.skillId,
         version: version.version,
         description: version.description,

@@ -1,0 +1,1081 @@
+openapi: 3.0.3
+info:
+  title: OpenClaw 技能平台 API
+  description: |
+    OpenClaw 技能平台 RESTful API 文档
+
+    提供技能管理、用户管理、搜索、版本控制和审核等功能。
+  version: 1.0.0
+  contact:
+    name: OpenClaw 技术支持
+    email: support@openclaw.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000/api
+    description: 本地开发环境
+  - url: https://api.openclaw.com/v1
+    description: 生产环境
+
+tags:
+  - name: 认证
+    description: 用户认证和授权
+  - name: 技能
+    description: 技能管理
+  - name: 搜索
+    description: 技能搜索
+  - name: 版本
+    description: 版本管理
+  - name: 用户
+    description: 用户管理
+  - name: 审核
+    description: 审核管理
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - 认证
+      summary: 用户登录
+      description: 使用用户名和密码登录系统，获取访问令牌
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /auth/logout:
+    post:
+      tags:
+        - 认证
+      summary: 用户登出
+      description: 登出系统，使当前令牌失效
+      operationId: logout
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 登出成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 登出成功
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/me:
+    get:
+      tags:
+        - 认证
+      summary: 获取当前用户信息
+      description: 获取当前登录用户的详细信息
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/refresh:
+    post:
+      tags:
+        - 认证
+      summary: 刷新访问令牌
+      description: 使用当前令牌获取新的访问令牌
+      operationId: refreshToken
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 刷新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /skills:
+    get:
+      tags:
+        - 技能
+      summary: 获取技能列表
+      description: 分页获取技能列表，支持分类筛选和排序
+      operationId: getSkills
+      parameters:
+        - name: page
+          in: query
+          description: 页码
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: page_size
+          in: query
+          description: 每页数量
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: category
+          in: query
+          description: 按分类筛选
+          schema:
+            type: string
+            enum: [productivity, automation, ai, development, integration, utility]
+        - name: sort_by
+          in: query
+          description: 排序方式
+          schema:
+            type: string
+            enum: [popular, newest, downloads, rating]
+            default: popular
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillListResponse'
+
+    post:
+      tags:
+        - 技能
+      summary: 创建技能
+      description: 发布新技能到平台
+      operationId: createSkill
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateSkillRequest'
+      responses:
+        '201':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /skills/my:
+    get:
+      tags:
+        - 技能
+      summary: 获取我的技能
+      description: 获取当前用户发布的所有技能
+      operationId: getMySkills
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /skills/{skill_id}:
+    get:
+      tags:
+        - 技能
+      summary: 获取技能详情
+      description: 获取指定技能的详细信息
+      operationId: getSkill
+      parameters:
+        - $ref: '#/components/parameters/SkillId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - 技能
+      summary: 更新技能
+      description: 更新技能信息
+      operationId: updateSkill
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SkillId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSkillRequest'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Skill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      tags:
+        - 技能
+      summary: 删除技能
+      description: 删除指定技能
+      operationId: deleteSkill
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SkillId'
+      responses:
+        '204':
+          description: 删除成功
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /skills/search:
+    get:
+      tags:
+        - 搜索
+      summary: 关键词搜索
+      description: 使用关键词搜索技能
+      operationId: searchSkills
+      parameters:
+        - name: q
+          in: query
+          description: 搜索关键词
+          required: true
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: 按分类筛选
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: 结果数量限制
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: 结果偏移量
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: 搜索成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+
+  /skills/semantic-search:
+    post:
+      tags:
+        - 搜索
+      summary: 语义搜索
+      description: 使用向量相似度进行智能语义搜索
+      operationId: semanticSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SemanticSearchRequest'
+      responses:
+        '200':
+          description: 搜索成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SemanticSearchResponse'
+
+  /skills/hybrid-search:
+    post:
+      tags:
+        - 搜索
+      summary: 混合搜索
+      description: 结合关键词和语义搜索的混合搜索
+      operationId: hybridSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HybridSearchRequest'
+      responses:
+        '200':
+          description: 搜索成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HybridSearchResponse'
+
+  /skills/{skill_id}/versions:
+    get:
+      tags:
+        - 版本
+      summary: 获取技能版本历史
+      description: 获取指定技能的所有历史版本
+      operationId: getSkillVersions
+      parameters:
+        - $ref: '#/components/parameters/SkillId'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillVersionsResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /skills/{skill_id}/rollback:
+    post:
+      tags:
+        - 版本
+      summary: 回滚技能版本
+      description: 将技能回滚到指定的历史版本
+      operationId: rollbackSkill
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SkillId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_version:
+                  type: string
+                  description: 目标版本号
+                  example: "1.0.0"
+              required:
+                - target_version
+      responses:
+        '200':
+          description: 回滚成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 回滚成功
+                  current_version:
+                    type: string
+                    example: "1.0.0"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /admin/users:
+    get:
+      tags:
+        - 用户
+      summary: 获取用户列表
+      description: 获取系统所有用户列表（管理员权限）
+      operationId: getUsers
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/users/{user_id}:
+    put:
+      tags:
+        - 用户
+      summary: 更新用户
+      description: 更新用户信息（管理员权限）
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - 用户
+      summary: 删除用户
+      description: 删除指定用户（管理员权限）
+      operationId: deleteUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: 删除成功
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /admin/skills:
+    get:
+      tags:
+        - 审核
+      summary: 获取待审核技能
+      description: 获取技能审核列表（管理员权限）
+      operationId: getPendingSkills
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: 审核状态
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+            default: pending
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /admin/skills/{skill_id}/approve:
+    post:
+      tags:
+        - 审核
+      summary: 审核通过技能
+      description: 审核通过指定技能（管理员权限）
+      operationId: approveSkill
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SkillId'
+      responses:
+        '200':
+          description: 审核通过
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 审核通过
+                  skill_id:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /admin/skills/{skill_id}/reject:
+    post:
+      tags:
+        - 审核
+      summary: 拒绝技能
+      description: 拒绝指定技能（管理员权限）
+      operationId: rejectSkill
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SkillId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: 拒绝原因
+              required:
+                - reason
+      responses:
+        '200':
+          description: 拒绝成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 已拒绝
+                  skill_id:
+                    type: string
+                  reason:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /admin/audit:
+    get:
+      tags:
+        - 审核
+      summary: 获取审核日志
+      description: 获取系统审核日志（管理员权限）
+      operationId: getAuditLogs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    SkillId:
+      name: skill_id
+      in: path
+      description: 技能 ID
+      required: true
+      schema:
+        type: string
+    UserId:
+      name: user_id
+      in: path
+      description: 用户 ID
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: 用户名
+        password:
+          type: string
+          format: password
+          description: 密码
+
+    LoginResponse:
+      allOf:
+        - $ref: '#/components/schemas/TokenResponse'
+        - type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: 访问令牌
+        token_type:
+          type: string
+          description: 令牌类型
+          example: bearer
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 用户 ID
+        username:
+          type: string
+          description: 用户名
+        email:
+          type: string
+          format: email
+          description: 邮箱
+        role:
+          type: string
+          enum: [user, developer, admin]
+          description: 用户角色
+        created_at:
+          type: string
+          format: date-time
+          description: 注册时间
+        last_active:
+          type: string
+          format: date-time
+          description: 最后活跃时间
+
+    Skill:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 技能 ID
+        name:
+          type: string
+          description: 技能名称
+        description:
+          type: string
+          description: 技能描述
+        author:
+          type: string
+          description: 作者
+        version:
+          type: string
+          description: 版本号
+        category:
+          type: string
+          enum: [productivity, automation, ai, development, integration, utility]
+          description: 分类
+        tags:
+          type: array
+          items:
+            type: string
+          description: 标签
+        rating:
+          type: number
+          format: float
+          description: 评分
+        downloads:
+          type: integer
+          description: 下载量
+        status:
+          type: string
+          enum: [published, draft, archived]
+          description: 状态
+        created_at:
+          type: string
+          format: date-time
+          description: 创建时间
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新时间
+
+    SkillDetail:
+      allOf:
+        - $ref: '#/components/schemas/Skill'
+        - type: object
+          properties:
+            readme:
+              type: string
+              description: README 内容
+            changelog:
+              type: string
+              description: 变更日志
+            versions:
+              type: array
+              items:
+                $ref: '#/components/schemas/SkillVersion'
+              description: 版本历史
+
+    SkillVersion:
+      type: object
+      properties:
+        version:
+          type: string
+          description: 版本号
+        created_at:
+          type: string
+          format: date-time
+          description: 创建时间
+        changelog:
+          type: string
+          description: 变更说明
+        author:
+          type: string
+          description: 作者
+
+    CreateSkillRequest:
+      type: object
+      required:
+        - name
+        - description
+        - category
+        - version
+        - archive
+      properties:
+        name:
+          type: string
+          description: 技能名称
+        description:
+          type: string
+          description: 技能描述
+        category:
+          type: string
+          enum: [productivity, automation, ai, development, integration, utility]
+          description: 分类
+        tags:
+          type: array
+          items:
+            type: string
+          description: 标签
+        version:
+          type: string
+          description: 版本号
+        archive:
+          type: string
+          format: binary
+          description: 技能包文件
+
+    UpdateSkillRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 技能名称
+        description:
+          type: string
+          description: 技能描述
+        category:
+          type: string
+          enum: [productivity, automation, ai, development, integration, utility]
+          description: 分类
+        tags:
+          type: array
+          items:
+            type: string
+          description: 标签
+        version:
+          type: string
+          description: 版本号
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: 邮箱
+        role:
+          type: string
+          enum: [user, developer, admin]
+          description: 角色
+
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 日志 ID
+        action:
+          type: string
+          description: 操作类型
+        operator:
+          type: string
+          description: 操作人
+        target:
+          type: string
+          description: 操作目标
+        result:
+          type: string
+          enum: [success, failure]
+          description: 结果
+        ip:
+          type: string
+          description: IP 地址
+        timestamp:
+          type: string
+          format: date-time
+          description: 时间戳
+
+    SearchRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: 搜索查询
+        category:
+          type: string
+          description: 分类筛选
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+        offset:
+          type: integer
+          minimum: 0
+          default: 0
+
+    SemanticSearchRequest:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          description: 搜索查询
+        category:
+          type: string
+          description: 分类筛选
+        limit:
+          type: integer
+          default: 20
+        offset:
+          type: integer
+          default: 0
+
+    HybridSearchRequest:
+      allOf:
+        - $ref: '#/components/schemas/SearchRequest'
+
+    SkillListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Skill'
+        total:
+          type: integer
+          description: 总数量
+        page:
+          type: integer
+          description: 当前页码
+        page_size:
+          type: integer
+          description: 每页数量
+
+    UserListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        total:
+          type: integer
+          description: 总数量
+
+    AuditLogListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLog'
+        total:
+          type: integer
+          description: 总数量
+
+    SkillVersionsResponse:
+      type: object
+      properties:
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkillVersion'
+
+    SearchResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              description:
+                type: string
+              score:
+                type: number
+                description: 相关性得分
+        total:
+          type: integer
+
+    SemanticSearchResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              description:
+                type: string
+              similarity:
+                type: number
+                description: 相似度得分
+        total:
+          type: integer
+
+    HybridSearchResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              description:
+                type: string
+              score:
+                type: number
+                description: 综合得分
+        total:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: 错误详情
+      required:
+        - detail
+
+  responses:
+    BadRequest:
+      description: 请求错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: 未认证
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Forbidden:
+      description: 权限不足
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: 资源不存在
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ValidationError:
+      description: 验证错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
