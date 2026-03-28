@@ -12,3 +12,6 @@ export type { SkillExecutorConfig, SkillCLIInfo, BatchExecuteResult } from './sk
 
 export { SessionManager, sessionManager } from './session-manager';
 export type { SessionState, HistoryEntry, SessionManagerOptions } from './session-manager';
+
+export { RegistrySync, registrySync } from './registry-sync';
+export type { CLIHubRegistry, CLIHubEntry, MergedRegistry, MergedSkillEntry, SyncOptions } from './registry-sync';
