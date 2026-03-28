@@ -21,6 +21,7 @@ import { updateCommand } from './commands/update';
 import { uninstallCommand } from './commands/uninstall';
 import { versionCommand } from './commands/version';
 import { rollbackCommand } from './commands/rollback';
+import { executeCommand, skillCommand } from './commands/execute';
 
 const VERSION = process.env.npm_package_version ?? '0.1.0';
 
@@ -501,6 +502,12 @@ program.addCommand(updateCommand);
 program.addCommand(uninstallCommand);
 program.addCommand(versionCommand);
 program.addCommand(rollbackCommand);
+
+// ====================
+// CLI-Anything 集成命令
+// ====================
+program.addCommand(executeCommand);
+program.addCommand(skillCommand);
 
 export { program };
 

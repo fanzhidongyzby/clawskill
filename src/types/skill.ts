@@ -18,6 +18,43 @@ export interface Skill {
   stars: number;
   createdAt: Date;
   updatedAt: Date;
+  
+  // CLI-Anything extended fields
+  source?: string;
+  category?: string;
+  installCmd?: string;
+  entryPoint?: string;
+  skillMdPath?: string;
+  requires?: string;
+}
+
+export interface SkillSearchResult {
+  url: string;
+  name: string;
+  description: string;
+  version: string;
+  category?: string;
+  source?: string;
+}
+
+export interface InstallResult {
+  success: boolean;
+  message: string;
+  path?: string;
+  error?: string;
+}
+
+/**
+ * Skill Source interface for pluggable skill sources
+ */
+export interface SkillSource {
+  name: string;
+  displayName: string;
+  description: string;
+  
+  search(query: string): Promise<SkillSearchResult[]>;
+  getSkill(skillUrl: string): Promise<Skill>;
+  install(skillUrl: string): Promise<InstallResult>;
 }
 
 export interface SkillDetail extends Skill {
