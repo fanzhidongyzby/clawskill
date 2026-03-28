@@ -22,6 +22,7 @@ import { uninstallCommand } from './commands/uninstall';
 import { versionCommand } from './commands/version';
 import { rollbackCommand } from './commands/rollback';
 import { executeCommand, skillCommand } from './commands/execute';
+import { harnessCommand } from './commands/harness';
 
 const VERSION = process.env.npm_package_version ?? '0.1.0';
 
@@ -508,6 +509,7 @@ program.addCommand(rollbackCommand);
 // ====================
 program.addCommand(executeCommand);
 program.addCommand(skillCommand);
+program.addCommand(harnessCommand);
 
 export { program };
 

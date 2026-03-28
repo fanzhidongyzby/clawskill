@@ -9,3 +9,6 @@ export type { ExecuteOptions, ExecuteResult, CLIInfo, CommandGroup, CommandInfo 
 
 export { SkillExecutor, skillExecutor } from './skill-executor';
 export type { SkillExecutorConfig, SkillCLIInfo, BatchExecuteResult } from './skill-executor';
+
+export { SessionManager, sessionManager } from './session-manager';
+export type { SessionState, HistoryEntry, SessionManagerOptions } from './session-manager';
