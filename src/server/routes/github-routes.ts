@@ -21,7 +21,7 @@ export async function registerGitHubRoutes(fastify: FastifyInstance): Promise<vo
     if (language) options.language = language;
     if (minStars) options.minStars = parseInt(minStars, 10);
 
-    const skills = await githubSource.list(options);
+    const skills = await githubSource.listSkills(options);
     return { data: skills };
   });
 
@@ -29,7 +29,7 @@ export async function registerGitHubRoutes(fastify: FastifyInstance): Promise<vo
   fastify.get('/github/skills/:owner/:repo', async (request) => {
     const { owner, repo } = request.params as { owner: string; repo: string };
 
-    const skill = await githubSource.get(`${owner}/${repo}`);
+    const skill = await githubSource.getSkill(`${owner}/${repo}`);
     return skill;
   });
 
@@ -47,11 +47,11 @@ export async function registerGitHubRoutes(fastify: FastifyInstance): Promise<vo
 
     if (owner && repo) {
       // 同步单个技能
-      const result = await githubSource.sync(`${owner}/${repo}`);
+      const result = await githubSource.getSkill(`${owner}/${repo}`);
       return result;
     } else {
       // 同步所有技能
-      const result = await githubSource.syncAll();
+      const result = await githubSource.listSkills();
       return result;
     }
   });

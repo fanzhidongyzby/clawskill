@@ -30,12 +30,12 @@ export async function registerVersionRoutes(
   fastify: FastifyInstance,
   options: { prefix?: string } & VersionRoutesOptions
 ): Promise<void> {
-  const prefix = options.prefix || '/api/v1';
+  // prefix is handled by fastify.register({ prefix })
   const { skillService } = options;
 
   // GET /skills/:skillId/versions - List all versions of a skill
   fastify.get<{ Params: { skillId: string } }>(
-    `${prefix}/skills/:skillId/versions`,
+    '/skills/:skillId/versions',
     async (request, reply) => {
       try {
         const { skillId } = request.params;
@@ -63,7 +63,7 @@ export async function registerVersionRoutes(
 
   // GET /skills/:skillId/versions/:version - Get specific version
   fastify.get<{ Params: { skillId: string; version: string } }>(
-    `${prefix}/skills/:skillId/versions/:version`,
+    '/skills/:skillId/versions/:version',
     async (request, reply) => {
       try {
         const { skillId, version } = request.params;
@@ -83,7 +83,7 @@ export async function registerVersionRoutes(
 
   // POST /skills/:skillId/versions - Create new version
   fastify.post<{ Params: { skillId: string }; Body: z.infer<typeof VersionCreateSchema> }>(
-    `${prefix}/skills/:skillId/versions`,
+    '/skills/:skillId/versions',
     async (request, reply) => {
       try {
         const { skillId } = request.params;
@@ -113,7 +113,7 @@ export async function registerVersionRoutes(
 
   // PUT /skills/:skillId/versions/:version - Update version metadata
   fastify.put<{ Params: { skillId: string; version: string }; Body: z.infer<typeof VersionUpdateSchema> }>(
-    `${prefix}/skills/:skillId/versions/:version`,
+    '/skills/:skillId/versions/:version',
     async (request, reply) => {
       try {
         const { skillId, version } = request.params;
@@ -136,7 +136,7 @@ export async function registerVersionRoutes(
 
   // DELETE /skills/:skillId/versions/:version - Delete version
   fastify.delete<{ Params: { skillId: string; version: string } }>(
-    `${prefix}/skills/:skillId/versions/:version`,
+    '/skills/:skillId/versions/:version',
     async (request, reply) => {
       try {
         const { skillId, version } = request.params;
@@ -160,7 +160,7 @@ export async function registerVersionRoutes(
 
   // POST /skills/:skillId/rollback - Rollback to previous version
   fastify.post<{ Params: { skillId: string }; Body: z.infer<typeof RollbackSchema> }>(
-    `${prefix}/skills/:skillId/rollback`,
+    '/skills/:skillId/rollback',
     async (request, reply) => {
       try {
         const { skillId } = request.params;
@@ -195,7 +195,7 @@ export async function registerVersionRoutes(
 
   // GET /skills/:skillId/version/latest - Get latest version
   fastify.get<{ Params: { skillId: string } }>(
-    `${prefix}/skills/:skillId/version/latest`,
+    '/skills/:skillId/version/latest',
     async (request, reply) => {
       try {
         const { skillId } = request.params;

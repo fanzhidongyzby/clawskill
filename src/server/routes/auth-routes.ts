@@ -73,11 +73,11 @@ export async function registerAuthRoutes(
   fastify: FastifyInstance,
   options: { prefix?: string } = {}
 ): Promise<void> {
-  const prefix = options.prefix || '/api/v1';
+  // prefix is handled by fastify.register({ prefix })
 
   // POST /auth/login - Login
   fastify.post<{ Body: z.infer<typeof LoginSchema> }>(
-    `${prefix}/auth/login`,
+    '/auth/login',
     async (request, reply) => {
       try {
         const { email, password } = LoginSchema.parse(request.body);
@@ -110,7 +110,7 @@ export async function registerAuthRoutes(
 
   // POST /auth/register - Register
   fastify.post<{ Body: z.infer<typeof RegisterSchema> }>(
-    `${prefix}/auth/register`,
+    '/auth/register',
     async (request, reply) => {
       try {
         const data = RegisterSchema.parse(request.body);
@@ -162,7 +162,7 @@ export async function registerAuthRoutes(
 
   // POST /auth/logout - Logout
   fastify.post(
-    `${prefix}/auth/logout`,
+    '/auth/logout',
     async (request, reply) => {
       try {
         const token = request.headers.authorization?.replace('Bearer ', '');
@@ -181,7 +181,7 @@ export async function registerAuthRoutes(
 
   // GET /auth/whoami - Get current user
   fastify.get(
-    `${prefix}/auth/whoami`,
+    '/auth/whoami',
     async (request, reply) => {
       try {
         const token = request.headers.authorization?.replace('Bearer ', '');
@@ -216,7 +216,7 @@ export async function registerAuthRoutes(
 
   // PUT /auth/user - Update user
   fastify.put<{ Body: z.infer<typeof UpdateUserSchema> }>(
-    `${prefix}/auth/user`,
+    '/auth/user',
     async (request, reply) => {
       try {
         const token = request.headers.authorization?.replace('Bearer ', '');

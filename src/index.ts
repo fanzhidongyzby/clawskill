@@ -56,6 +56,7 @@ export type {
 export { DependencyResolver } from './dependency/resolver/dependency-resolver';
 export { InstallCommandGenerator } from './dependency/generator/install-command-generator';
 export { SkillManager } from './dependency/manager/skill-manager';
+export type { SkillInfo as ManagerSkillInfo } from './dependency/manager/skill-manager';
 export type {
   Dependency,
   DependencyItem,
@@ -64,7 +65,6 @@ export type {
   DependencyConflict,
   ResolutionResult,
   ResolutionOptions,
-  SkillInfo as DependencySkillInfo,
 } from './dependency/types/dependency';
 export type { InstallCommand, InstallPlan } from './dependency/generator/install-command-generator';
 

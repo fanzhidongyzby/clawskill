@@ -10,6 +10,9 @@ const PUBLIC_PATHS = [
   '/health',
   '/docs',
   '/skill/',
+  '/api/v1/auth/',
+  '/api/v1/search',
+  '/api/v1/skills',
 ];
 
 export async function authMiddleware(
@@ -21,8 +24,8 @@ export async function authMiddleware(
     return;
   }
 
-  // GET requests to /api/v1/skills are public (read-only)
-  if (request.method === 'GET' && request.url.startsWith('/api/v1/skills')) {
+  // GET requests to /api/v1/skills and /api/v1/github are public (read-only)
+  if (request.method === 'GET' && (request.url.startsWith('/api/v1/skills') || request.url.startsWith('/api/v1/github'))) {
     return;
   }
 

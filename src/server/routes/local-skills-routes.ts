@@ -91,12 +91,12 @@ export async function registerLocalSkillsRoutes(
   fastify: FastifyInstance,
   options: { prefix?: string } & LocalSkillsRoutesOptions
 ): Promise<void> {
-  const prefix = options.prefix || '/api/v1';
+  // prefix is handled by fastify.register({ prefix })
   const { skillService } = options;
 
   // GET /skills/installed - List all installed skills for current user
   fastify.get(
-    `${prefix}/skills/installed`,
+    '/skills/installed',
     async (request, reply) => {
       try {
         const userId = getUserIdFromToken(fastify, request);
@@ -138,7 +138,7 @@ export async function registerLocalSkillsRoutes(
 
   // POST /skills/installed/install - Install a skill
   fastify.post<{ Body: z.infer<typeof InstallSkillSchema> }>(
-    `${prefix}/skills/installed/install`,
+    '/skills/installed/install',
     async (request, reply) => {
       try {
         const userId = getUserIdFromToken(fastify, request);
@@ -181,7 +181,7 @@ export async function registerLocalSkillsRoutes(
 
   // POST /skills/installed/uninstall - Uninstall a skill
   fastify.post<{ Body: z.infer<typeof UninstallSkillSchema> }>(
-    `${prefix}/skills/installed/uninstall`,
+    '/skills/installed/uninstall',
     async (request, reply) => {
       try {
         const userId = getUserIdFromToken(fastify, request);
@@ -217,7 +217,7 @@ export async function registerLocalSkillsRoutes(
 
   // POST /skills/installed/update - Update a skill to latest or specific version
   fastify.post<{ Body: z.infer<typeof UpdateSkillSchema> }>(
-    `${prefix}/skills/installed/update`,
+    '/skills/installed/update',
     async (request, reply) => {
       try {
         const userId = getUserIdFromToken(fastify, request);
@@ -265,7 +265,7 @@ export async function registerLocalSkillsRoutes(
 
   // GET /skills/installed/:skillId - Get details of an installed skill
   fastify.get<{ Params: { skillId: string } }>(
-    `${prefix}/skills/installed/:skillId`,
+    '/skills/installed/:skillId',
     async (request, reply) => {
       try {
         const userId = getUserIdFromToken(fastify, request);
@@ -308,7 +308,7 @@ export async function registerLocalSkillsRoutes(
 
   // POST /skills/installed/:skillId/use - Mark skill as used (for statistics)
   fastify.post<{ Params: { skillId: string } }>(
-    `${prefix}/skills/installed/:skillId/use`,
+    '/skills/installed/:skillId/use',
     async (request, reply) => {
       try {
         const userId = getUserIdFromToken(fastify, request);
