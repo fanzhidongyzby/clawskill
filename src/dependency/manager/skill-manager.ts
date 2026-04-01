@@ -3,8 +3,8 @@
  * 管理技能元数据和版本
  */
 import { SkillMetadata, Dependency } from '../types/dependency';
-import { DependencyResolver } from './dependency-resolver';
-import { InstallCommandGenerator } from './generator/install-command-generator';
+import { DependencyResolver } from '../resolver/dependency-resolver';
+import { InstallCommandGenerator } from '../generator/install-command-generator';
 
 /**
  * 技能信息
@@ -116,7 +116,7 @@ export class SkillManager {
    * @param version 版本
    * @param platform 平台
    */
-  generateInstallCommand(skillId: string, version: string, platform?: 'openclaw' | 'npm' | 'pip' | 'cargo' | 'go') {
+  async generateInstallCommand(skillId: string, version: string, platform?: 'openclaw' | 'npm' | 'pip' | 'cargo' | 'go') {
     const skill = this.skills.get(skillId);
     if (!skill) {
       throw new Error(`Skill not found: ${skillId}`);

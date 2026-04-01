@@ -41,7 +41,7 @@ export { generateApiKey, createApiKey } from './server/middleware/auth';
 export { GitHubSource, GitHubSourceConfig } from './github/sources/github-source';
 export { SkillMDParser, ParsedSkillMD, SkillMetadata } from './github/parser/skill-md-parser';
 export { IndexBuilder, IndexItem } from './github/indexer/index-builder';
-export { Syncer, SyncConfig, SyncResult } from './github/syncer';
+export { Syncer, SyncConfig, SyncResult } from './github/syncer/syncer';
 export type {
   Source,
   ListOptions,

@@ -3,7 +3,7 @@
  * 从技能源同步数据并构建索引
  */
 import { Source, SkillDetail, SkillMD, VersionInfo } from '../types/source';
-import { IndexBuilder, IndexItem } from './index-builder';
+import { IndexBuilder, IndexItem } from '../indexer/index-builder';
 
 /**
  * 同步配置
